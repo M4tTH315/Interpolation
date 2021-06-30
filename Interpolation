@@ -1,0 +1,54 @@
+% Declaring variables
+% Making x equidistant for n+1 points between 0 and 4pi
+% y = f(x)
+% x = (a:b / (n+1):b)
+% Set a and b in accordance to bounds
+n = 1000;
+x = (0:4*pi/(n+1):4*pi)';
+y = x.*sin(x);
+
+% Doing interpolation through Vandermode matrix
+% linspace also returns a range of values equidistant but they differ from 
+% the values of x above which are also equidistant (I don't exactly
+% understand how they are different but they are).
+% P = Polynomial Coefficients
+% yev = Pn(x)  
+P = vander(x)\y
+xev = linspace(0, 4*pi, n+1);
+yev = polyval(P,xev)
+
+% Check to see if residuals are approx 0 
+pred = polyval(P,x) - y;
+
+% Used to find actual values of function 
+ytrue = xev.*sin(xev);
+
+% Interpolation through MATLABS built in function (linear interpolation by
+% default)
+yinterp = interp1(x,y,xev)
+
+% Interpolation through Lagrange method 
+ylagrange = polyinterp(x,y,xev)
+
+% Plots to compare values of interpolated functions
+% First plot is points calculated from function and function itself
+plot(x, y, 'bo')
+hold on
+
+% Second plot is of interpolated polynomial from Vandermode
+plot(xev, yev, 'r-' )
+hold on
+
+% Third plot is of function with true values 
+plot(xev, ytrue, 'g-')
+hold on
+
+% Fourth plot is for MATLABS interpolated function
+plot(xev, yinterp, 'c-')
+hold on
+
+% Fifth plot is for Lagrange interpolated function
+plot(xev, ylagrange, 'k-')
+grid on
+legend('y = xsin(x)', 'Vandermode Interp', 'yhat = xev*sin(xev)', 'MATLAB Interp', 'Lagrange Interp')
+title('f(x) and its Interpolated Polynomials at n+1 points')
